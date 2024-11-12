@@ -70,3 +70,20 @@ ZeraMatriz macro COLUNAI,LINHAI,NUMDREP,LINHAMAX,MATRIZZERA
 
     RetornaZera:  
     ENDM
+
+Limpar tela
+
+Limpar_Tela macro
+                 MOV AH, 06H
+                 MOV AL, 0
+                 MOV BH, 07H
+                 MOV CX, 0
+                 MOV DX, 184FH
+                 INT 10H
+
+                 MOV AH, 02H
+                 MOV BH, 0
+                 MOV DH, 5
+                 MOV DL, 0
+                 INT 10H
+endm

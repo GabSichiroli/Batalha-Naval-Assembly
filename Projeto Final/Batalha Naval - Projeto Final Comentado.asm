@@ -1,4 +1,4 @@
-ITLE Batalha Naval - Projeto Final
+TITLE Batalha Naval - Projeto Final
 .MODEL SMALL
 .stack 0100h
 IMPLOGO macro PART1,PART2,PART3,PART4,PART5,MSGPRIN
