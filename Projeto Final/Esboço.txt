@@ -1,0 +1,6 @@
+1- Definir as matrizes e limitações;
+2- Definir matriz que ocorera o jogo e zerar outra para imprimir;
+3- Leitura - (J especial) e registro de acerto ou erro;
+4- Definir vitoria ou derrota;
+
+Problemas: Não esta comparando com 4

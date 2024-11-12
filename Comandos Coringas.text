@@ -1,0 +1,72 @@
+Imprimir caracter:
+
+OR         DL,30H                ; nUmero em caractere
+MOV        AH, 02H
+INT        21H
+
+MOV DL, BL
+        OR  DL,30H                ; nUmero em caractere
+        MOV AH, 02
+        INT 21H
+        
+Espaço:
+MOV     DL, 020H
+MOV     AH,02
+INT     21h
+
+Imprime QUALQUER tipo de matriz, somente alterando SI; De maneira
+
+ImprimeMatriz macro VALORCOL,INCIALSI,NUMREP,REGVALOR,MATRIZIMP
+                 Local      MudaLinha
+                 Local      L1
+                 Local      IMPRIMELINHA
+                 Local      Retornaimp
+
+                 MOV        BX,VALORCOL
+                 MOV        SI,INCIALSI
+                 MOV        CX,NUMREP
+                 JMP        L1
+    MudaLinha:   
+                 MOV        BX,VALORCOL            ; zera o índice da coluna
+                 ADD        SI,40                  ; Muda a linha
+                 MOV        CX,REP                  ;Volta o valor de cx para o loop
+                 CMP        SI,REGVALOR
+                 JG         Retornaimp
+    L1:          
+                 pula_linha
+                 MOV        AH, 02H
+    IMPRIMELINHA:
+                 MOV        DX, MATRIZIMP [SI][BX]    ; coloca o elemento MATRIZ4X4[0,0] em AL
+                 OR         DL,30H                 ; nUmero em caractere
+                 INT        21H
+                 ADD        BX,2
+                 LOOP       IMPRIMELINHA
+                 JMP        MudaLinha
+    Retornaimp:  
+
+Imprime QUALQUER tipo de matriz, somente alterando SI; De maneira
+
+ZeraMatriz macro COLUNAI,LINHAI,NUMDREP,LINHAMAX,MATRIZZERA
+                 Local      PROXLinha
+                 Local      ZERALINHA
+                 Local      RetornaZera
+
+                 MOV        BX,COLUNAI
+                 MOV        SI,LINHAI
+                 MOV        CX,NUMDREP
+                 JMP        ZERALINHA
+    PROXLinha:   
+                 MOV        BX,COLUNAI            ; zera o índice da coluna
+                 ADD        SI,40                  ; Muda a linha
+                 MOV        CX,NUMDREP                  ;Volta o valor de cx para o loop
+                 CMP        SI,LINHAMAX
+                 JG         RetornaZera
+                 
+    ZERALINHA:
+                 MOV        MATRIZZERA [SI][BX],0    ; coloca o elemento MATRIZ4X4[0,0] em AL
+                 ADD        BX,2
+                 LOOP       ZERALINHA
+                 JMP        PROXLinha
+
+    RetornaZera:  
+    ENDM
