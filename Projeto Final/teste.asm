@@ -113,12 +113,46 @@ endm
 Quadrantezera macro MSGCONT,VALORCOL,INCIALSI,REGVALOR,MATRIZUS,LINHAI,LINHAMAX
                   Limpar_Tela
                   Controle_Programa MSGCONT
-                  ImprimeQUA        VALORCOL,INCIALSI,REGVALOR,MATRIZUS
+                  IMPBONITINHOQua   VALORCOL,INCIALSI,REGVALOR,MSGCONT,MATRIZUS
                   ZeraQua           LINHAI,LINHAMAX,MATRIZUS
                   pula_linha
-                  ImprimeQUA        VALORCOL,LINHAI,LINHAMAX,MATRIZUS
+                  IMPBONITINHOQua   VALORCOL,LINHAI,LINHAMAX,MSGCONT,MATRIZUS
 ENDM
+IMPBONITINHOQua macro VALORCOL,INCIALSI,REGVALOR,CONTROLE,MATRIZIMP
+                    Local             MudaLinha
+                    Local             L1
+                    Local             IMPRIMELINHA
+                    Local             Retornaimp
 
+                    Controle_Programa CONTROLE
+
+                    MOV               BX,VALORCOL
+                    MOV               SI,INCIALSI
+                    MOV               CX,10
+
+                    
+                    JMP               L1
+    MudaLinha:      
+                    MOV               BX,VALORCOL               ; zera o índice da coluna
+                    ADD               SI,40                     ; Muda a linha
+
+                    
+                    MOV               CX,10                     ;Volta o valor de cx para o loop
+                    CMP               SI,REGVALOR
+                    JG                Retornaimp
+                    
+    L1:             Controle_Programa CONTROLE
+                    pula_linha
+                    MOV               AH, 02H
+    IMPRIMELINHA:   
+                    MOV               DX, MATRIZIMP [SI][BX]    ; coloca o elemento MATRIZ4X4[0,0] em AL
+                    OR                DL,30H                    ; nUmero em caractere
+                    INT               21H
+                    ADD               BX,2
+                    LOOP              IMPRIMELINHA
+                    JMP               MudaLinha
+    Retornaimp:     
+ENDM
 .DATA
     MATRIZ       DW 1,1,1,1,1,1,1,1,1,1     ,     2,2,2,2,2,2,2,2,2,2
                  DW 1,1,1,1,1,1,1,1,1,1     ,     2,2,2,2,2,2,2,2,2,2
@@ -152,7 +186,7 @@ ENDM
     LOGO4        DB 13,10,'              =                                                 =            ','$'
     LOGO5        DB 13,10,'              ===================================================              ', 13,10, '$'
     ENTMSG1      DB 13,10,'              Insira ate 3 numeros de 0-9 para iniciar o jogo:', '$'
-    MSGCONTROLE  DB 13,10,'OK1', '$'
+    MSGCONTROLE  DB '              I',13,10, '$'
     MSGCONTROLE1 DB 13,10,'OK2', '$'
     MSGCONTROLE2 DB 13,10,'OK3', '$'
     MSGCONTROLE3 DB 13,10,'OK4', '$'
@@ -161,84 +195,84 @@ ENDM
 .CODE
 MAIN PROC
     ;Acesso ao DATA
-                  MOV               AX, @DATA
-                  MOV               DS,AX
-                  CALL              INICIAR
+                  MOV           AX, @DATA
+                  MOV           DS,AX
+                  CALL          INICIAR
     ;Termina o programa
-                  MOV               AH,4CH
-                  INT               21H
+                  MOV           AH,4CH
+                  INT           21H
 MAIN ENDP
 INICIAR PROC
                   Limpar_Tela
-                  IMPLOGO           LOGO1, LOGO2, LOGO3, LOGO4, LOGO5, ENTMSG1
+                  IMPLOGO       LOGO1, LOGO2, LOGO3, LOGO4, LOGO5, ENTMSG1
 
-                  MOV               CX, 3
-                  XOR               BX,BX
-                  XOR               DX,DX
-                  MOV               AH,1
+                  MOV           CX, 3
+                  XOR           BX,BX
+                  XOR           DX,DX
+                  MOV           AH,1
                       
 
     LerEnt:       
-                  INT               21h
-                  CMP               AL, 0DH
-                  JE                CompENT
-                  MOV               DL,AL
-                  ADD               BL, DL
+                  INT           21h
+                  CMP           AL, 0DH
+                  JE            CompENT
+                  MOV           DL,AL
+                  ADD           BL, DL
                    
                       
-                  LOOP              LerEnt
-                  CMP               DL, 39H
-                  JBE               MENOR
-                  CMP               DL,41H
-                  JGE               MAIOR
+                  LOOP          LerEnt
+                  CMP           DL, 39H
+                  JBE           MENOR
+                  CMP           DL,41H
+                  JGE           MAIOR
                       
                       
                      
                       
     MENOR:        
-                  ADD               DL, 30H
+                  ADD           DL, 30H
     MAIOR:        
-                  ADD               DL, 9
+                  ADD           DL, 9
     CompENT:      
-                  CMP               BL, 4
-                  JB                PulaParaFim
+                  CMP           BL, 4
+                  JB            PulaParaFim
 
     DivDerminadaM:
-                  MOV               AX, BX
-                  MOV               BL, 4
-                  DIV               BL
+                  MOV           AX, BX
+                  MOV           BL, 4
+                  DIV           BL
     CompQUA:      
-                  CMP               AH, 1
-                  JE                QUA1
+                  CMP           AH, 1
+                  JE            QUA1
 
-                  CMP               AH, 2
-                  JE                QUAQ2
+                  CMP           AH, 2
+                  JE            QUAQ2
 
-                  CMP               AH, 3
-                  JE                QUAQ3
+                  CMP           AH, 3
+                  JE            QUAQ3
                       
-                  CMP               AH, 0
-                  JE                QUAQ4
+                  CMP           AH, 0
+                  JE            QUAQ4
     PulaParaFim:  
-                  JMP               RetornaEnt
+                  JMP           RetornaEnt
     QUAQ2:        
-                  JMP               QUA2
+                  JMP           QUA2
     QUAQ3:        
-                  JMP               QUA3
+                  JMP           QUA3
     QUAQ4:        
-                  JMP               QUA4
+                  JMP           QUA4
     QUA1:         
-                  Quadrantezera     MSGCONTROLE,0,0,360,MATRIZ,400,760
-                  JMP               RetornaEnt
+                  Quadrantezera MSGCONTROLE,0,0,360,MATRIZ,400,760
+                  JMP           RetornaEnt
     QUA2:         
-                  Quadrantezera     MSGCONTROLE1,20,0,360,MATRIZ,0,360
-                  JMP               RetornaEnt
+                  Quadrantezera MSGCONTROLE1,20,0,360,MATRIZ,0,360
+                  JMP           RetornaEnt
     QUA3:         
-                  Quadrantezera     MSGCONTROLE2,0,400,760,MATRIZ,0,360
-                  JMP               RetornaEnt
+                  Quadrantezera MSGCONTROLE2,0,400,760,MATRIZ,0,360
+                  JMP           RetornaEnt
     QUA4:         
-                  Quadrantezera     MSGCONTROLE3,20,400,760,MATRIZ,0,360
-                  JMP               RetornaEnt
+                  Quadrantezera MSGCONTROLE3,20,400,760,MATRIZ,0,360
+                  JMP           RetornaEnt
 
     RetornaEnt:   
                   RET
