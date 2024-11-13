@@ -110,35 +110,44 @@ Limpar_Tela macro
                 MOV DL, 0
                 INT 10H
 endm
-Quadrantezera macro MSGCONT,VALORCOL,INCIALSI,REGVALOR,MATRIZUS,LINHAI,LINHAMAX
+Quadrantezera macro MSGCONT,VALORCOL,INCIALSI,QUANTIDADE,REGVALOR,MATRIZUS,LINHAI,LINHAMAX
                   Limpar_Tela
                   Controle_Programa MSGCONT
-                  IMPBONITINHOQua   VALORCOL,INCIALSI,REGVALOR,MSGCONT,MATRIZUS
+                  IMPBONITINHOQua   VALORCOL,INCIALSI,QUANTIDADE,REGVALOR,MATRIZUS
                   ZeraQua           LINHAI,LINHAMAX,MATRIZUS
                   pula_linha
-                  IMPBONITINHOQua   VALORCOL,LINHAI,LINHAMAX,MSGCONT,MATRIZUS
+                  IMPBONITINHOQua   VALORCOL,LINHAI,QUANTIDADE,LINHAMAX,MATRIZUS
 ENDM
-IMPBONITINHOQua macro VALORCOL,INCIALSI,REGVALOR,CONTROLE,MATRIZIMP
+Espaso macro QUANTIDADE
+                 PUSH CX
+                 MOV  CX, QUANTIDADE
+    CONTAESPASOS:
+                 MOV  DL, 20H
+                 MOV  AH,02
+                 INT  21h
+                 LOOP CONTAESPASOS
+    END_SPACES:  
+                 POP  CX
+endm
+IMPBONITINHOQua macro VALORCOL,INCIALSI,QUANTIDADE,REGVALOR,MATRIZIMP
                     Local             MudaLinha
                     Local             L1
                     Local             IMPRIMELINHA
                     Local             Retornaimp
 
-                    Controle_Programa CONTROLE
-
                     MOV               BX,VALORCOL
                     MOV               SI,INCIALSI
+                    Espaso QUANTIDADE
                     MOV               CX,10
 
-                    
                     JMP               L1
     MudaLinha:      
                     MOV               BX,VALORCOL               ; zera o índice da coluna
                     ADD               SI,40                     ; Muda a linha
-
-                    
+                    Espaso QUANTIDADE
                     MOV               CX,10                     ;Volta o valor de cx para o loop
                     CMP               SI,REGVALOR
+
                     JG                Retornaimp
                     
     L1:             Controle_Programa CONTROLE
@@ -186,7 +195,7 @@ ENDM
     LOGO4        DB 13,10,'              =                                                 =            ','$'
     LOGO5        DB 13,10,'              ===================================================              ', 13,10, '$'
     ENTMSG1      DB 13,10,'              Insira ate 3 numeros de 0-9 para iniciar o jogo:', '$'
-    MSGCONTROLE  DB '              I',13,10, '$'
+    MSGCONTROLE  DB 13,10,'OK1', '$'
     MSGCONTROLE1 DB 13,10,'OK2', '$'
     MSGCONTROLE2 DB 13,10,'OK3', '$'
     MSGCONTROLE3 DB 13,10,'OK4', '$'
@@ -262,16 +271,16 @@ INICIAR PROC
     QUAQ4:        
                   JMP           QUA4
     QUA1:         
-                  Quadrantezera MSGCONTROLE,0,0,360,MATRIZ,400,760
+                  Quadrantezera MSGCONTROLE,0,0,15,360,MATRIZ,400,760
                   JMP           RetornaEnt
     QUA2:         
-                  Quadrantezera MSGCONTROLE1,20,0,360,MATRIZ,0,360
+                  Quadrantezera MSGCONTROLE1,20,0,15,360,MATRIZ,0,360
                   JMP           RetornaEnt
     QUA3:         
-                  Quadrantezera MSGCONTROLE2,0,400,760,MATRIZ,0,360
+                  Quadrantezera MSGCONTROLE2,0,400,15,760,MATRIZ,0,360
                   JMP           RetornaEnt
     QUA4:         
-                  Quadrantezera MSGCONTROLE3,20,400,760,MATRIZ,0,360
+                  Quadrantezera MSGCONTROLE3,20,400,15,760,MATRIZ,0,360
                   JMP           RetornaEnt
 
     RetornaEnt:   
