@@ -46,18 +46,6 @@ LIMPA_TELA MACRO
                MOV DL, 0
                INT 10H
 ENDM
-IMPRIME_ESPACOS MACRO QUANTIDADE
-                    LOCAL CONTAESPACOS
-                    PUSH  CX                 ; Salva o valor original de CX
-                    MOV   CX, &QUANTIDADE    ; Usa o valor do parâmetro QUANTIDADE
-    CONTAESPACOS:   
-                    MOV   DL, 20H            ; Caractere de espaço (ASCII 32)
-                    MOV   AH, 02H            ; Função para saída de caractere
-                    INT   21H                ; Interrupção para imprimir DL
-                    LOOP  CONTAESPACOS       ; Decrementa CX e repete até CX = 0
-                    POP   CX                 ; Restaura o valor original de CX
-ENDM
-
 SALVAMJOGO MACRO
                PUSH BX
                PUSH SI
