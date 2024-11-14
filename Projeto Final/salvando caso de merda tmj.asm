@@ -41,22 +41,22 @@ LIMPA_TELA MACRO
 
     ;Move Cursor
                MOV AH, 02H
-               MOV BH, 0        
-               MOV DH, 10        ;Linha
+               MOV BH, 0
+               MOV DH, 10       ;Linha
                MOV DL, 0
                INT 10H
 ENDM
 Espaso MACRO QUANTIDADE
-Local CONTAESPASOS, END_SPACES
-                 PUSH CX
-                 MOV  CX, QUANTIDADE
+                 Local CONTAESPASOS, END_SPACES
+                 PUSH  CX
+                 MOV   CX, QUANTIDADE
     CONTAESPASOS:
-                 MOV  DL, 20H
-                 MOV  AH,02
-                 INT  21h
-                 LOOP CONTAESPASOS
+                 MOV   DL, 20H
+                 MOV   AH,02
+                 INT   21h
+                 LOOP  CONTAESPASOS
     END_SPACES:  
-                 POP  CX
+                 POP   CX
 ENDM
 SALVAMJOGO MACRO
                PUSH BX
@@ -67,6 +67,19 @@ VOLTAVALOR MACRO
                POP BX
                POP SI
                POP DI
+ENDM
+CENTRALIZA MACRO COLUNA
+               PUSH AX
+               PUSH BX
+               PUSH DX
+
+               MOV  AH, 02H
+               MOV  DL, COLUNA
+               INT  10H
+
+               POP  AX
+               POP  BX
+               POP  DX
 ENDM
 .DATA
     MATRIZ       DW 0,0,0,0,0,0,1,1,1,0     ,     1,1,1,0,0,0,0,0,0,0
@@ -90,7 +103,7 @@ ENDM
                  DW 3,3,3,3,3,3,3,3,3,3     ,     4,4,4,4,4,4,4,4,4,4
                  DW 3,3,3,3,3,3,3,3,3,3     ,     4,4,4,4,4,4,4,4,4,4
                  DW 3,3,3,3,3,3,3,3,3,3     ,     4,4,4,4,4,4,4,4,4,4
-
+MATRIZIMPRESSÃO DW 10 DUP(10 DUP('~'))
 
     VETOR        DB 10 DUP (0)
     ;Mensagens;
@@ -111,105 +124,117 @@ ENDM
 .CODE
 MAIN PROC
     ;Acesso ao DATA
-                  MOV               AX, @DATA
-                  MOV               DS,AX
+                  MOV         AX, @DATA
+                  MOV         DS,AX
 
     ;Chamadas;
-                  CALL              INICIAR
+                  CALL        INICIAR
 
     ;Termina o programa
-                  MOV               AH,4CH
-                  INT               21H
+                  MOV         AH,4CH
+                  INT         21H
 MAIN ENDP
 INICIAR PROC
                   LIMPA_TELA
-                  IMPMENSAG         LOGO1
-                  IMPMENSAG         LOGO2
-                  IMPMENSAG         LOGO3
-                  IMPMENSAG         LOGO4
-                  IMPMENSAG         LOGO5
-                  IMPMENSAG         ENTMSG1
+                  IMPMENSAG   LOGO1
+                  IMPMENSAG   LOGO2
+                  IMPMENSAG   LOGO3
+                  IMPMENSAG   LOGO4
+                  IMPMENSAG   LOGO5
+                  IMPMENSAG   ENTMSG1
 
-                  MOV               CX, 3
-                  XOR               BX,BX
-                  XOR               DX,DX
-                  MOV               AH,1
+                  MOV         CX, 3
+                  XOR         BX,BX
+                  XOR         DX,DX
+                  MOV         AH,1
 
     LerEnt:       
-                  INT               21h
-                  CMP               AL, 0DH
-                  JE                CompENT
-                  MOV               DL,AL
-                  ADD               BL, DL
-                  LOOP              LerEnt
+                  INT         21h
+                  CMP         AL, 0DH
+                  JE          CompENT
+                  MOV         DL,AL
+                  ADD         BL, DL
+                  LOOP        LerEnt
                   LIMPA_TELA
     ;Aqui ó - Gabi;
     CompENT:      
-                  CMP               BL, 4
-                  JB                RetornaEnt
+                  CMP         BL, 4
+                  JB          RetornaEnt
 
     DivDerminadaM:
-                  MOV               AX, BX
-                  MOV               BL, 4
-                  DIV               BL
+                  MOV         AX, BX
+                  MOV         BL, 4
+                  DIV         BL
 
     CompQUA:      
-                  CMP               AH, 1
-                  JE                QUA1
+                  CMP         AH, 1
+                  JE          QUA1
 
-                  CMP               AH, 2
-                  JE                QUA2
+                  CMP         AH, 2
+                  JE          QUA2
 
-                  CMP               AH, 3
-                  JE                QUA3
+                  CMP         AH, 3
+                  JE          QUA3
                       
-                  CMP               AH, 0
-                  JE                QUA4
+                  CMP         AH, 0
+                  JE          QUA4
 
     ;Vai determinar o quadrante ultilizado e definir o zerado;
     QUA1:         
-                  INFORMATRIZ       0,0,360
-                  CALL              QUARDANTEJOGO
-                  JMP               RetornaEnt
+                  INFORMATRIZ 0,0,360
+                  CALL        QUARDANTEJOGO
+                  JMP         RetornaEnt
     QUA2:         
-                  INFORMATRIZ       20,0,360
-                  CALL              QUARDANTEJOGO
-                  JMP               RetornaEnt
+                  INFORMATRIZ 20,0,360
+                  CALL        QUARDANTEJOGO
+                  JMP         RetornaEnt
     QUA3:         
-                  INFORMATRIZ       0,400,760
-                  CALL              QUARDANTEJOGO
-                  JMP               RetornaEnt
+                  INFORMATRIZ 0,400,760
+                  CALL        QUARDANTEJOGO
+                  JMP         RetornaEnt
 
     QUA4:         
-                  INFORMATRIZ       20,400,760
-                  CALL              QUARDANTEJOGO
-                  JMP               RetornaEnt
+                  INFORMATRIZ 20,400,760
+                  CALL        QUARDANTEJOGO
+                  JMP         RetornaEnt
 
     RetornaEnt:   
                   RET
 INICIAR ENDP
 QUARDANTEJOGO PROC
+                  LIMPA_TELA
                   SALVAMJOGO
-                  MOV               CX,10
-                  
-                  JMP               L1
+                  MOV         CX, 10                          ; Define o número de linhas da matriz a serem impressas
+                  MOV         BX, 0                           ; Índice inicial da coluna da matriz
+                  MOV         SI, 0                           ; Offset inicial na matriz
+                  MOV         DH, 5                           ; Linha inicial na tela (pode ajustar conforme necessário)
+                  MOV         DL, 15                          ; Coluna fixa na tela para a impressão
+                  JMP         L1
+
     MudaLinha:    
-                  SUB               BX,20
-                  pula_linha                  
-                  ADD               SI,40                  
-                  MOV               CX,10                  
-                  CMP               SI,DI
-                  JG                Retornaimp
-    L1:                       
-                  MOV               AH, 02H
+                  ADD         DH, 1                           ; Avança uma linha para baixo na tela
+                  MOV         BX, 0                           ; Reinicia o índice da coluna da matriz
+                  ADD         SI, 20                          ; Avança para a próxima linha da matriz
+                  MOV         CX, 10                          ; Reseta o contador de colunas da matriz
+
+                  CMP         SI, 200                         ; Checa se alcançou o final da matriz 10x10 (10 linhas * 20 bytes por linha)
+                  JGE         Retornaimp
+
+    L1:           
+                  MOV         AH, 02H                         ; Função para posicionar o cursor
+                  MOV         BH, 0                           ; Página de vídeo
+                  INT         10H                             ; Reposiciona o cursor na linha DH e coluna fixa DL
+
     IMPRIMELINHA: 
-                  MOV               DX, MATRIZ [SI][BX]    
-                  OR                DL,30H                 
-                  INT               21H
-                  ADD               BX,2
-                  LOOP              IMPRIMELINHA
-                  Espaso 15
-                  JMP               MudaLinha
+                  MOV         AX, MATRIZIMPRESSÃO[SI + BX]    ; Carrega o valor da matriz na posição atual
+                  OR          AL, 30H                         ; Converte para caractere ASCII
+                  MOV         AH, 0Eh                         ; Função de escrita de caractere em modo texto (INT 10h)
+                  INT         10H                             ; Escreve o caractere na tela
+                  ADD         BX, 2                           ; Avança para o próximo elemento da linha da matriz
+                  LOOP        IMPRIMELINHA
+
+                  JMP         MudaLinha
+
     Retornaimp:   
                   RET
 QUARDANTEJOGO ENDP
